@@ -1,0 +1,823 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+<META NAME="generator" CONTENT="http://txt2tags.org">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<TITLE>É isso aí!</TITLE>
+
+<!-- Included tutorial.css -->
+<STYLE TYPE="text/css">
+pre {
+	background-color:black;
+}
+</STYLE>
+
+</HEAD><BODY BGCOLOR="#c9c9c9" TEXT="black">
+<CENTER>
+<H1>Guest Machine</H1>
+</CENTER>
+
+<P></P>
+<HR NOSHADE SIZE=1>
+<P></P>
+
+  <OL>
+  <LI><A HREF="#toc1">Objetivo</A>
+    <UL>
+    <LI><A HREF="#toc2">1.1. Convenções</A>
+    </UL>
+  <LI><A HREF="#toc3">Instalando o GIT</A>
+  <LI><A HREF="#toc4">Criando um Repositório Local</A>
+    <UL>
+    <LI><A HREF="#toc5">3.1. Iniciando um Novo Repositório</A>
+    <LI><A HREF="#toc6">3.2. Realizando Modificações no Repositório</A>
+    <LI><A HREF="#toc7">3.3. Staging e Commit</A>
+    <LI><A HREF="#toc8">3.4. Desfazendo Alterações e Revertendo Commits</A>
+    <LI><A HREF="#toc9">3.5. Criando Branches</A>
+    <LI><A HREF="#toc10">3.6. Merge</A>
+    </UL>
+  <LI><A HREF="#toc11">Lidando com Repositórios Remotos</A>
+    <UL>
+    <LI><A HREF="#toc12">4.1. Clones</A>
+    </UL>
+  <LI><A HREF="#toc13">Resumo dos Comandos Aprendidos</A>
+  <LI><A HREF="#toc14">Prática</A>
+  </OL>
+
+<P></P>
+<HR NOSHADE SIZE=1>
+<P></P>
+
+<A NAME="toc1"></A>
+<H1>1. Objetivo</H1>
+
+<P>
+O objetivo deste tutorial é compreender os principais aspectos do controle de versionamento de software através da ferramenta GIT. Aqui, utilizaremos o terminal de comandos. Contudo, diversas ferramentas possuem,
+integração com o GIT como, por exemplo, o NetBeans. 
+</P>
+<P>
+Ao final desta aula, o aluno deverá ser capaz de:
+</P>
+
+<UL>
+<LI>Criar e gerênciar repositórios locais;
+<LI>Criar branches;
+<LI>Realizar merges;
+<LI>Enviar commits para repositórios remotos;
+<LI>Compreender os serviços GitHub e BitBucket na nuvem;
+<LI>Nunca mais usar "e-mail", "pendrive", "arquivos zip", entre outros, para armazenar e compartilhar códigos-fonte ;).
+</UL>
+
+<A NAME="toc2"></A>
+<H2>1.1. Convenções</H2>
+
+<OL>
+<LI>Os trechos em cinza contem comandos e suas respectivas saídas. O comando sempre será precedido de um $, as linhas seguintes correspondem a saída do comando.
+<LI>As seções possuem uma sequência lógica, portanto devem ser lidas na ordem apresentada. Cada seção possui passos enumarados a partir de 1. É importante executar cada passo seguindo a ordem.  
+</OL>
+
+<A NAME="toc3"></A>
+<H1>2. Instalando o GIT</H1>
+
+<P>
+A ferramente GIT pode ser facilmente instalada em um sistema Ubuntu ou Debian com o seguinte comando:
+</P>
+
+<PRE>
+  $ sudo apt install git
+</PRE>
+
+<P>
+Após a instalação, no primeiro uso, o GIT irá exigir a configuração do nome e email do usuário. Estas informações serão gravadas para cada commit realizado, ficando registrado o usuário responsável. Para 
+realizar a configuração, execute os comandos abaixo, substituindo por suas informações:
+</P>
+
+<PRE>
+  $ git config --global user.name "John Doe"
+  $ git config --global user.email johndoe@example.com
+</PRE>
+
+<A NAME="toc4"></A>
+<H1>3. Criando um Repositório Local</H1>
+
+<P>
+Ao contrário de ferramentas como CVS e SVN, o GIT não exige a instalação de um servidor para armazenamento e gerência do código-fonte. Claro que o uso de um servidor para backup dos fontes é muito importante. 
+Contudo, aprenderemos a utilizar serviços gratuitos na nuvem. Assim, dispensando a necessidade de configuração deste tipo de serviço na máquina local. Por enquanto, iremos aprender o básico sobre GIT com os 
+recursos locais. 
+</P>
+
+<A NAME="toc5"></A>
+<H2>3.1. Iniciando um Novo Repositório</H2>
+
+<P>
+<B>1</B> - Qualquer diretório pode ser colocado sobre controle de versão. Como exemplo, iremos criar o diretório chamado gitteste e depois colocá-lo sob controle de versão. 
+Veja:
+</P>
+
+<PRE>
+  $ mkdir gitteste
+  $ cd gitteste
+  $ git init
+</PRE>
+
+<P>
+O comando <B>git init</B> cria um subdiretório oculto chamado .git. É neste diretório que o GIT mantem as informações necessárias para o controle de versão. Mas você não precisa se preocupar com tal diretório, o GIT irá
+gerenciâ-lo.
+</P>
+<P>
+<B>2</B> - Crie um arquivo chamado hello.c no diretório gitteste e escreva um programa C simples. Por exemplo:
+</P>
+
+<PRE>
+  #include&lt;stdio.h&gt;
+  
+  int main(){
+    printf("Hello World!");
+    return 0;
+  }
+</PRE>
+
+<P>
+<B>3</B> - Agora, iremos verificar o nosso repositório para saber o status dos arquivos versionados. Para isso, utilize o seguinte comando:
+</P>
+
+<PRE>
+  $ git status
+  
+  No ramo master
+  
+  No commits yet
+  
+  Arquivos não monitorados:
+    (utilize "git add &lt;arquivo&gt;..." para incluir o que será submetido)
+  
+  	hello.c
+  
+  nada adicionado ao envio mas arquivos não registrados estão presentes (use "git add" to registrar)
+</PRE>
+
+<P>
+A informação mais importante: <B>Arquivos não monitorados:</B> hello.c
+</P>
+<P>
+Você acabou de adicionar um arquivo ao repositório recém criado. Este arquivo ainda não esta sob controle de versão. Precisamos, dizer explicitamente que ele deve fazer parte dos arquivos controlados pelo GIT. 
+</P>
+<P>
+<B>4</B> - Coloque o arquivo hello.c sob controle de versão usando o comando <B>git add</B>. 
+</P>
+
+<PRE>
+  $ git add hello.c
+</PRE>
+
+<P>
+Verifique o status do repositório novamente (git status). Você deverá perceber o seguinte:
+</P>
+
+<PRE>
+  $ git status
+  
+  No ramo master
+  
+  No commits yet
+  
+  Mudanças a serem submetidas:
+    (utilize "git rm --cached &lt;arquivo&gt;..." para não apresentar)
+  
+  	new file:   hello.c
+</PRE>
+
+<P>
+Agora existem <B>*Mudanças a serem submetidas*</B>. Ou seja, vc tem um arquivo sob controle de versão, modificado e que precisa ser comitado. Um commit é a consolidação das modificações realizadas em um repositório. 
+Normalmente, um commit corresponde a implementação de uma nova feature ou a correção de bug. 
+</P>
+<P>
+<B>5</B> - Para realizar o commit faça:
+</P>
+
+<PRE>
+  $ git commit -m "Criação do repositório"
+  
+  [master (root-commit) dda1b26] Criacao do repositorio
+   1 file changed, 0 insertions(+), 0 deletions(-)
+   create mode 100644 hello.c
+</PRE>
+
+<P>
+O parâmetro -m é seguido de uma mensagem. Esta mensagem deve indicar o que foi realizado naquele commit. Neste caso, a criação do repositório. 
+</P>
+<P>
+Ao verificar o status do repositório (git status), o resultado deve ser:
+</P>
+
+<PRE>
+  $ git status
+  No ramo master
+  nothing to commit, working tree clean
+</PRE>
+
+<P>
+Você ainda pode ver uma listagem de todos os commits realizados através do commando <B>git log</B>, por exemplo:
+</P>
+
+<PRE>
+  $ git log
+  
+  commit 61f7bae3b6abadbd0bf4b2eea0357103435099c5 (HEAD -&gt; master)
+  Author: Carlos Moratelli &lt;crmoratelli@gmail.com&gt;
+  Date:   Sat Aug 11 10:10:24 2018 -0300
+  
+      Criação do repositório.
+  
+</PRE>
+
+<P>
+Pronto! Você criou o seu primeiro repositório e realizou o primeiro commit. Os comando a serem lembrados são:
+</P>
+
+<PRE>
+  $ git init
+  $ git add &lt;arquivo&gt;
+  $ git commit -m "mensagem"
+  $ git status
+  $ git log
+</PRE>
+
+<A NAME="toc6"></A>
+<H2>3.2. Realizando Modificações no Repositório</H2>
+
+<P>
+Neste ponto, já possuímos um repositório e desejamos efetuar alterações no código fonte. Para isso, basta abrir o arquivo fonte desejado e realizar as alterações normalmente. O GIT irá monitorar todas as alterações
+ocorridas dentro do diretório do repositório, por exemplo, alteração de arquivo, inclusão de novo arquivo ou remoção. Para ilustrar isso, adicionaremos um novo arquivo no repositório com uma função que deve ser chamada 
+a partir do programa hello.c. 
+</P>
+<P>
+<B>1</B> - Use o seu editor de texto preferido para criar um novo arquivo chamado func.c no diretório gitteste. Neste arquivo, crie uma função qualquer, por exemplo:
+</P>
+
+<PRE>
+  int soma(int a, int b){
+     return a + b;
+  }
+</PRE>
+
+<P>
+<B>2</B> - Utilize o comando <B>git status</B> para verificar a situação do repositório.
+</P>
+
+<PRE>
+  $ git status
+  No ramo master
+  Arquivos não monitorados:
+    (utilize "git add &lt;arquivo&gt;..." para incluir o que será submetido)
+  
+  	func.c
+  
+  nada adicionado ao envio mas arquivos não registrados estão presentes (use "git add" to registrar)
+  
+</PRE>
+
+<P>
+O GIT nos mostra que temos um novo arquivo não monitorado (func.c). Quando terminarmos as alterações, iremos adicionar este arquivo ao controle de versionamento. 
+</P>
+<P>
+<B>3</B> - Altere o arquivo hello.c para chamar a função soma(). Por Exemplo:
+</P>
+
+<PRE>
+  #include&lt;stdio.h&gt;
+  
+  int main(){
+    int ret;
+    ret = soma(2, 3);
+    printf("O resultado é: %d", ret);
+    return 0;
+  }
+</PRE>
+
+<P>
+<B>4</B> - Novamente, verifique a situação do repositorio.
+</P>
+
+<PRE>
+  $ git status
+  No ramo master
+  Changes not staged for commit:
+    (utilize "git add &lt;arquivo&gt;..." para atualizar o que será submetido)
+    (utilize "git checkout -- &lt;arquivo&gt;..." para descartar mudanças no diretório de trabalho)
+  
+  	modified:   hello.c
+  
+  Arquivos não monitorados:
+    (utilize "git add &lt;arquivo&gt;..." para incluir o que será submetido)
+  
+  	func.c
+  
+  nenhuma modificação adicionada à submissão (utilize "git add" e/ou "git commit -a")
+  
+</PRE>
+
+<P>
+<B>5</B> - Agora temos um arquivo não monitorado e um arquivo modificado. Por ora, terminamos as alterações e desejamos realizar o commit. Porém, antes de realizar o commit, vamos verificar quais foram as alterações 
+realizadas no repositório, utilizando o comando <B>git diff</B>. Por exemplo, queremos saber o que foi alterado no arquivo hello.c:
+</P>
+
+<PRE>
+  $ git diff hello.c
+  git diff hello.c
+  diff --git a/hello.c b/hello.c
+  index b4b231e..ca1ba0a 100644
+  --- a/hello.c
+  +++ b/hello.c
+  @@ -1,6 +1,8 @@
+   #include&lt;stdio.h&gt;
+   
+   int main(){
+  -  printf("Hello World!");
+  +  int ret;
+  +  ret = soma(2, 3);
+  +  printf("O resultado é: %d", ret);
+     return 0;
+   }
+  
+</PRE>
+
+<P>
+As linhas que começam o sinal <B>-</B> foram removidas do código original, já as linha que começam com o sinal <B>+</B> foram adicionadas. Com isso, conseguimos visualizar todas as alterações realizadas e ter um 
+controle apurado das modificações. O commit irá registrar tais alterações e poderemos visualizá-las novamente no futuro, se necessário. 
+</P>
+<P>
+<B>6</B> - Por fim, vamos realizar o commit. Devemos executar o comando <B>git add</B> para cada arquivo que desejamos comitar. Por exemplo:
+</P>
+
+<PRE>
+  $ git add hello.c
+  $ git add func.c
+</PRE>
+
+<P>
+Utilize o comando <B>git status</B> para ver quais arquivo irão ser comitados. Isso é importante para que você possa confirmar se todos os arquivos desejados foram adicionados. Execute o commando <B>git commit</B> com 
+uma mensagem pertinente ao commit. 
+</P>
+
+<PRE>
+  $ git commit -m "Adicionado funcionalidade de soma."
+</PRE>
+
+<P>
+Vc pode utilizar o commando <B>git log</B> para ver o histórico de commits realizados. 
+</P>
+<P>
+Nesta seção aprendemos apenas um comando novo:
+</P>
+
+<PRE>
+  $ git diff &lt;arquivo&gt;
+</PRE>
+
+<A NAME="toc7"></A>
+<H2>3.3. Staging e Commit</H2>
+
+<P>
+Uma das partes mais confusas para o iniciante em GIT é o conceito de <I>staging enviroment</I> (ambiente de preparação) e sua relação com o commit. 
+</P>
+<P>
+O commit, nada mais é do que o registro do que mudou em relação a versão anterior do código fonte. Essencialmente, você realiza mudanças no repositório (por exemplo, adicionando ou removendo arquivos)
+e informa ao git que tais arquivos farão parte do commit. Commits são essenciais para o seu projeto, pois permitem que alterações sejam desfeitas a qualquer momento. 
+</P>
+<P>
+Você deve utilizar o comando <I>git add &lt;arquivo&gt;</I> para informar quais arquivos serão commitados. Tal commando coloca o arquivo indicado no estágio de preparação, ou seja, o arquivo esta sendo 
+marcado para fazer parte do próximo commit. Arquivos que não estão em preparação (staging) não serão commitados. 
+</P>
+<P>
+É importante saber o significado de staging, pois é um termo utilizado entre os usuários de GIT, e nada mais é do que um passo intermediário antes do commit. O staging também pode ser conhecido com index. Finalmente, um arquivo no GIT pode estar em 1 dos três estados: 
+modificado, preparado ou comitado. 
+</P>
+
+<A NAME="toc8"></A>
+<H2>3.4. Desfazendo Alterações e Revertendo Commits</H2>
+
+<P>
+Aqui veremos duas situações típicas em que você se arrepende das modificações e deseja recuperar a versão anterior.
+</P>
+<P>
+<B>1</B> - Para alterações, que ainda não foram comitadas, você pode facilmente desfazê-las usando o comando <B>git checkout</B>. Por exemplo, faça qualquer alteração no arquivo hello.c e verifique a
+situação do repositório. Agora reverta as modificações com o comando abaixo:
+</P>
+
+<PRE>
+  $ git checkout hello.c
+</PRE>
+
+<P>
+Pronto! O arquivo voltou para a versão do commit atual. Contudo, muito cuidado com este comando. Ele joga fora todas as alterações, não existe maneira de recuperá-las. 
+</P>
+<P>
+<B>2</B> - Caso vc se arrependa de um commit realizado, vc pode revertê-lo usando o comando <B>git revert</B>. Para exemplificar o seu uso, faça uma alteração qualquer em seu repositório e realize um comite. Agora, use o comando <B>git log</B> para verificar todos os comites realizados. Por exemplo:
+</P>
+
+<PRE>
+  $ git log
+  commit 38ebbcd6b1012e8dd86f492fde72d9ba242f196a (HEAD -&gt; master)
+  Author: Carlos Moratelli &lt;crmoratelli@gmail.com&gt;
+  Date:   Sat Aug 11 11:29:30 2018 -0300
+  
+      Adiciona comentário
+  
+  commit 54f34d5be78ff4e3d55457e0a7669234a868a500
+  Author: Carlos Moratelli &lt;crmoratelli@gmail.com&gt;
+  Date:   Sat Aug 11 10:38:28 2018 -0300
+  
+      Adicionado funcionalidade de soma.
+  
+  commit 61f7bae3b6abadbd0bf4b2eea0357103435099c5
+  Author: Carlos Moratelli &lt;crmoratelli@gmail.com&gt;
+  Date:   Sat Aug 11 10:10:24 2018 -0300
+  
+      Criação do repositório.
+  
+</PRE>
+
+<P>
+No meu caso, irei reverter o commit "Adiciona comentário". Pois percebi que aquelas alterações trouxeram mais problemas do que melhorias para o meu software. Para isso farei:
+</P>
+
+<PRE>
+  $ git revert 38ebbcd6b1012e8dd86f492fde72d9ba242f196a
+</PRE>
+
+<P>
+Veja que um commit é identificado pelo seu código hash. Basta copiar e colar o hash para o comando. Ao precionar enter, será aberto o editor nano para que você possa modificar o comentário do <B>novo commit</B>. Apenas use ^O e ^X (ctrl O e ctrl X) para salvar e sair. Agora use git log para verificar como repositório ficou:
+</P>
+
+<PRE>
+  $ git log
+  
+  commit 18eab17d327040c8d50a86b6703ca7c538d9ea11 (HEAD -&gt; master)
+  Author: Carlos Moratelli &lt;crmoratelli@gmail.com&gt;
+  Date:   Sat Aug 11 11:44:04 2018 -0300
+  
+      Revert "Adiciona comentário"
+      
+      This reverts commit 38ebbcd6b1012e8dd86f492fde72d9ba242f196a.
+  
+  commit 38ebbcd6b1012e8dd86f492fde72d9ba242f196a
+  Author: Carlos Moratelli &lt;crmoratelli@gmail.com&gt;
+  Date:   Sat Aug 11 11:29:30 2018 -0300
+  
+      Adiciona comentário
+  
+  commit 54f34d5be78ff4e3d55457e0a7669234a868a500
+  Author: Carlos Moratelli &lt;crmoratelli@gmail.com&gt;
+  Date:   Sat Aug 11 10:38:28 2018 -0300
+  
+      Adicionado funcionalidade de soma.
+  
+  commit 61f7bae3b6abadbd0bf4b2eea0357103435099c5
+  Author: Carlos Moratelli &lt;crmoratelli@gmail.com&gt;
+  Date:   Sat Aug 11 10:10:24 2018 -0300
+  
+      Criação do repositório.
+  
+</PRE>
+
+<P>
+Observe que ao invés de remover o commit desejado, o GIT adicionou um novo commit que defaz as alterações do anterior. 
+</P>
+<P>
+No GIT é possível "remover" um commit indesejado apenas quando ele não tiver sido enviado para um repositório público (que é o caso neste momento). Contudo, optei
+por mostrar o comando <B>git revert</B> pois ele permite desfazer alterações em qualquer situação. Veja que isso irá deixar um "rastro" de tudo o que foi realizado no repositório.
+É impossível que alguém oculte um bug, pois um commit feito e enviado para o servidor (veremos a seguir) nunca poderá ser "removido".
+</P>
+<P>
+Os comandos aprendidos nesta seção são:
+</P>
+
+<PRE>
+  $ git checkout &lt;arquivo&gt;
+  $ git revert &lt;hash&gt;
+</PRE>
+
+<A NAME="toc9"></A>
+<H2>3.5. Criando Branches</H2>
+
+<P>
+Já aprendemos o básico sobre criação e controle de códigos fonte. Agora aprenderemos mais uma funcionalidade muito importante na gerência de um repositório: a criação de branches. Imagine que, em um certo momento,
+você deseja implementar uma nova funcionalidade experimental no seu software. Contudo, você não quer que essa funcionalidade afete a versão atual do código fonte, pois você não tem certeza se 
+ela passará a fazer parte da versão oficial do software. Ou seja, você deseja criar uma versão de teste da nova funcinalidade e, se tiver sucesso, tornar essa versão definitiva ou abandoná-la caso contrário. 
+Sem controle de versão, resolveríamos o problema fazendo uma cópia do diretório de trabalho. Contudo, o GIT nos dá uma possibilidade muito melhor: o branch. Criar um branch é como criar um novo diretório, 
+onde as alterações não afetam os outros branches. A vantagem é podermos juntar branches facilmente, o que não pode ser feito com diretórios. 
+</P>
+<P>
+<B>1</B> - O repositório que criamos já possui um branch default, chamado <B>master</B>. Para verificar a existência do branch master execute o comando:
+</P>
+
+<PRE>
+  $ git branch
+  * master
+</PRE>
+
+<P>
+Observe que, no momento, o único branch é o master (o * indica o branch selecionado). O branch master também é conhecido como trunk, ou seja, o principal branch do repositório. 
+</P>
+<P>
+<B>2</B> - Vamos criar um novo branch em nosso repositório, chamado teste1. Para isso faça:
+</P>
+
+<PRE>
+  $ git checkout -b teste1
+  Switched to a new branch 'teste1'
+</PRE>
+
+<P>
+O comando <B>git checkout -b &lt;novo branch&gt;</B> cria um novo branch baseado no branch atual. Ou seja, o branch teste1 terá exatamente o mesmo código fonte do branch master. Verifique o branch atual usando o 
+comando <B>git branch</B>.
+</P>
+
+<PRE>
+  $ git branch 
+    master
+  * teste1
+</PRE>
+
+<P>
+Veja que o * mostra que o branch atual passou a ser teste1. 
+</P>
+<P>
+<B>3</B> - Agora iremos fazer uma alteração qualquer no branch teste1. Por exemplo, adicionar uma nova função no arquivo func.c:
+</P>
+
+<PRE>
+  int mult(int a, int b){
+  	return a * b;
+  }
+</PRE>
+
+<P>
+<B>4</B> - Realize o commit desta alteração:
+</P>
+
+<PRE>
+  $ git add func.c
+  $ git commit -m "Adicionando função de multiplicação."
+</PRE>
+
+<P>
+Com isso, temos um branch chamado teste1 que possui a função de multiplicação. Agora, vamos voltar para o branch master para verificarmos a situação do arquivo func.c.
+</P>
+<P>
+<B>5</B> - Volte para o branch master:
+</P>
+
+<PRE>
+  $ git checkout master
+</PRE>
+
+<P>
+Repare que o seu commit no branch teste1 não afetou o branch master. O arquivo func.c não possui a nova função e commit também não aparece no comando <B>git log</B>.
+</P>
+<P>
+<B>Atenção</B>: Para que seja possível mudar de branch, não podem haver mudanças pendentes, ou seja, todas as alterações devem ter sido comitadas ou desfeitas. Caso contrário, o 
+comando <B>git checkout &lt;branch&gt;</B> irá falhar.
+</P>
+<P>
+Veja que o comando <B>git checkout</B> passou a ter uma segunda utilidade, além de desfazer alterações em arquivos, permite trocar ou criar branches. 
+</P>
+<P>
+Nesta seção aprendemos os comandos:
+</P>
+
+<PRE>
+  $ git branch (exibe os branches existentes)
+  $ git checkout -b &lt;novo branch&gt; (cria novo branch)
+  $ git checkout &lt;branch&gt; (alterna entre os branches existentes)
+</PRE>
+
+<A NAME="toc10"></A>
+<H2>3.6. Merge</H2>
+
+<P>
+Merge é a habilidade de juntar dois ramos de desenvolvimento, ou seja, dois branches diferentes, em um só! Com isso, seremos capazes de unir funcionalidades desenvolvidas em branchs separados. As vezes,
+um desenvolvedor pode passar semanas ou meses trabalhando em um branch, desenvolvendo uma nova funcionalidade, e ao final, juntar o seu branch com o master (o branch principal) ou qualquer outro branch. Uma
+operação de merge pode ser bastante complexa dependendo das alterações realizadas no código fonte. Contudo, na maior parte das vezes, o GIT conseguirá realizar o merge automaticamente. Quando um merge falha,
+dizemos que ocorreu um conflito. Conflitos acontecem se dois desenvolvedores alterarem as mesmas linhas do código fonte em branches diferentes. Neste caso, o programador deverá intervir na operação de merge para
+indicar qual das alterações irá prevalecer. Nesta aula, lidaremos apenas com merges sem conflitos, ou automáticos. 
+</P>
+<P>
+<B>1</B> - Para exemplificar, iremos juntar o branch teste1 ao branch master. Ou seja, iremos importar a funcionalidade de multiplicação para o branch principal. Para isso, primeiro mude para o branch master.
+</P>
+
+<PRE>
+  $ git checkout master
+</PRE>
+
+<P>
+<B>2</B> - Agora vamos utilizar o comando <B>git merge</B>. Este comando realiza o merge entre o branch atual e o branch indicado. Execute:
+</P>
+
+<PRE>
+  $ git merge teste1
+  Updating 18eab17..20aa0ee
+  Fast-forward
+   func.c | 4 ++++
+   1 file changed, 4 insertions(+)
+</PRE>
+
+<P>
+Se não houver conflitos todas as alterações do branch teste1 serão trazidas para o branch master. Execute o comando <B>git log</B> e verifique que o commit adicional que existia no branch teste1 foi trazido para
+o branch master. 
+</P>
+<P>
+Nesta seção aprendemos os comando:
+</P>
+
+<PRE>
+  git merge &lt;branch&gt;
+</PRE>
+
+<A NAME="toc11"></A>
+<H1>4. Lidando com Repositórios Remotos</H1>
+
+<P>
+Apesar do GIT não exigir a iteração com servidores de fontes, é indispensável que você utilize um repositório remoto (um servidor GIT na rede) para backup do seu trabalho. Vivemos na era da 
+computação em nuvem. Existem serviços gratuitos que podemos utilizar para realizar backup de nossas atividades como Google Drive e Dropbox. Felizmente, também existem servidores gratuitos para GIT na Internet.
+Neste momento, pare este tutorial e crie (se ainda não tiver) um usuário nos serviços GitHub e Bitbucket.
+</P>
+
+<PRE>
+  www.github.com
+  www.bitbucket.org
+</PRE>
+
+<P>
+Na versão gratuita, o GitHub permite apenas a criação de repositórios públicos. Ou seja, todos na rede terão acesso. Desta forma, pode ser utilizado apenas para projetos open-source. Contudo, o BitBucket permite
+a criação de repositórios privados de maneira gratuita, limitando o número de desenvolvedores que terão acesso, servindo para pequenos projetos em equipe. Ambos os serviços possuem versões pagas com acesso
+a todas as funcionalidades. 
+</P>
+<P>
+Em termos de aprendizado e utilização, do ponto de vista do GIT, os dois repositórios são idênticos. Ou seja, todos os comandos aprendidos poderão ser usados nos dois repositórios. O tutorial não irá a abranger
+a criação do repositório nos serviços online. Neste ponto, peça ajuda para o professor durante a aula. 
+</P>
+<P>
+O nosso objetivo é criar um repositório chamado gitteste1 no GitHub. Para tanto, faça login no site e crie um repositório público com este nome. Ao criar o repositório o GitHub irá mostrar dois possíveis
+endereços para o repositório, por exemplo:
+</P>
+
+<PRE>
+  https://github.com/crmoratelli/gitteste1.git
+  git@github.com:crmoratelli/gitteste1.git
+</PRE>
+
+<P>
+Iremos optar pelo endereço https. Muitas organizações barram o protocolo SSH em suas redes para evitar acessos remotos. Assim, o protocolo HTTPS pode ser usado mais facilmente em diferentes redes. 
+</P>
+<P>
+<B>1</B> - Com o repositório gitteste1 criado, iremos proceder com o envio dos fontes para ele. Para isso, precisamos adicionar o endereço do repositório remoto em nosso repositório local. Então faça:
+</P>
+
+<PRE>
+  git remote add origin &lt;endereço do repositório&gt;
+</PRE>
+
+<P>
+No comando acima, <B>origin</B> é o nome do repositório remoto. No lugar de origin podemos usar github, meuservidor, servidordofulano e assim por diante. As vezes, quando estamos trabalhando de maneira distribuída,
+podemos ter mais de um servidor remoto configurado em nosso repositório local, cada um deles, identificado por um nome diferente. 
+</P>
+<P>
+<B>2</B> - Agora que já possuímos um repositório remoto, vamos enviar nossos fontes para lá! Primeiro tenha certeza que você esta no branch master.
+</P>
+
+<PRE>
+  $ git checkout master
+</PRE>
+
+<P>
+Agora efetive o envio dos fontes. 
+</P>
+
+<PRE>
+  $ git push -u origin master
+  
+  Username for 'https://github.com': crmoratelli
+  Password for 'https://crmoratelli@github.com': ******
+  Counting objects: 14, done.
+  Delta compression using up to 8 threads.
+  Compressing objects: 100% (12/12), done.
+  Writing objects: 100% (14/14), 1.42 KiB | 725.00 KiB/s, done.
+  Total 14 (delta 2), reused 0 (delta 0)
+  remote: Resolving deltas: 100% (2/2), done.
+  To https://github.com/crmoratelli/gitteste1.git
+   * [new branch]      master -&gt; master
+  Branch 'master' set up to track remote branch 'master' from 'origin'.
+  
+</PRE>
+
+<P>
+O comando <B>git push</B> é reponsável pelo envio dos fontes para o repositório remoto. 
+</P>
+<P>
+<B>Cuidado!</B> Algumas coisas estão implícitas no comando acima. Primeiro, você precisa indicar para qual branch, no servidor, os fontes serão enviados. Podemos ver que o destino foi o branch master. Segundo,
+o único branch enviado é o branch em que vc esta no momento. Como estavamos no branch master, nós o enviado para um branch também chamado master no repositório remoto. 
+</P>
+<P>
+Como exercício vamos enviar o branch teste1 para o um repositório chamado teste1 no servidor remoto. Então faça:
+</P>
+
+<PRE>
+  $ git checkout teste1
+  $ git push -u origin teste1
+</PRE>
+
+<P>
+Agora, vá até o seu repositório no GitHub e navegue nele pelo browser. Use algum tempo explorando as funcionalidades do GitHub. 
+</P>
+<P>
+<B>3</B> - Eventualmente, iremos precisar sincronizar o nosso repositório local com o repositório remote para obter commits realizado por outros desenvolvedores. Para isso, devemos realizar o comando <B>git pull</B>.
+Primeiro, garanta que você esta no branch que deseja sincronizar, depois execute o comando git pull. Por exemplo:
+</P>
+
+<PRE>
+  git checkout master
+  git pull origin master
+</PRE>
+
+<P>
+Novamente, origin é o nome do repositório remote e master é o branch remoto que estamos sincronzando. Ao final deste tutorial, faremos alguns exercícios para nos ambientarmos com os comandos aprendidos neste seção. 
+</P>
+<P>
+Nesta seção aprendemos o comando:
+</P>
+
+<PRE>
+  $ git push -u &lt;repositório remoto&gt; &lt;branch de destino&gt;
+  $ git pull &lt;repositório remoto&gt; &lt;branch de origem&gt;
+</PRE>
+
+<A NAME="toc12"></A>
+<H2>4.1. Clones</H2>
+
+<P>
+Até o momento trabalhamos em um repositório local. Nós o inicializamos localmente (<B>git init</B>) fizemos modificações e, finalmente, o enviamos para a nuvem. Contudo, em muitos projetos, 
+o desenvolvimento inicia a partir de um repositório já existente. Por exemplo, esse repositório pode estar disponível no GitHub. No jargão do GIT, a operação de cópia de um repositório para uma máquina local é denominado
+<B>clone</B>. Isso porque, ao contrário de repositórios como CVS e SVN, o GIT faz com que uma cópia completa dos fontes junto de todo o histórico de modificações seja baixado. Ou seja, cada desenvolvedor mantem um
+clone do repositório em sua máquina local. Este é um dos principais diferenciais de um sistema de versionamento distribuído versus um centralizado. 
+</P>
+<P>
+<B>1</B> - Para compreendermos o fucionamento, vamos realizar um clone de um repositório pré-existente. 
+Para tanto, utilize o comando <B>git clone</B>:
+</P>
+
+<PRE>
+  $ git clone https://github.com/crmoratelli/fs_simul.git
+</PRE>
+
+<P>
+Observe que o comando <B>git clone</B> exige o endereço do repositório. Neste caso, estamos baixando um repositório do GitHub, chamado fs_simul. Como resultado do comando, será criado um diretório local
+chamado fs_simul onde encontra-se o clone. 
+</P>
+<P>
+<B>2</B> - Entre no diretório e use o comando <B>git log</B> para ver o histórico de commits. 
+</P>
+<P>
+<B>Observação</B>: O repositório remoto é aquele utilizado no comando clone. Ou seja, se você realizar algum commit e tentar utilizar o comando <B>git push -u origin master</B> os fontes serão enviado para <A HREF="https://github.com/crmoratelli/fs_simul.git">https://github.com/crmoratelli/fs_simul.git</A>.
+Contudo, você não tem permissão para gravar alterações neste repositório, pois ele pertence ao professor. Para enviar os fontes para um repositório seu, utilize o comando <B>git add remote</B> para adicionar 
+um novo repositório remoto. 
+</P>
+
+<A NAME="toc13"></A>
+<H1>5. Resumo dos Comandos Aprendidos</H1>
+
+<PRE>
+  $ git init (inicializa um novo repositório)
+  $ git add &lt;arquivo&gt; (coloca arquivo em staging)
+  $ git commit -m "mensagem" (commit)
+  $ git status (status do repositório)
+  $ git log (exibe lista de commits)
+  $ git diff &lt;arquivo&gt; (exibe alterações em um arquivo)
+  $ git checkout &lt;arquivo&gt; (desfaz alteração em arquivo)
+  $ git revert &lt;hash&gt; 
+  $ git branch (exibe os branches existentes)
+  $ git checkout -b &lt;novo branch&gt; (cria novo branch)
+  $ git checkout &lt;branch&gt; (alterna entre os branches existentes)
+  $ git push -u &lt;repositório remoto&gt; &lt;branch de destino&gt;
+  $ git pull &lt;repositório remoto&gt; &lt;branch de origem&gt;
+  $ git merge &lt;branch&gt; (realiza merge de branches)
+</PRE>
+
+<A NAME="toc14"></A>
+<H1>6. Prática</H1>
+
+<OL>
+<LI>Faça um clone de um repositório qualquer do GitHub, preferencialmente que contenha código em linguagem C/C++, e envie os fontes (git push) para um repositório privado no BitBucket.
+<LI>A partir do repositório privado criado anteriormente, de acesso de leitura e escrita para o seu colega e peça que ele realize um clone do repositório.
+<LI>Realize diferentes alterações e commits no repositório local. Peça que seu colega faça o mesmo. Enviem as alterações para o repositório. Faça com que as alterações de seu colega apareçam em seu 
+repositório local (git pull). 
+</OL>
+
+<P>
+Escrito por Carlos R. Moratelli em Wed Aug 15 17:35:30 2018.
+</P>
+
+<!-- html code generated by txt2tags 2.6 (http://txt2tags.org) -->
+<!-- cmdline: txt2tags git.t2t -->
+</BODY></HTML>
