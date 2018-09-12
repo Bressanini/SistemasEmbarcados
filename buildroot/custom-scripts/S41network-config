@@ -13,7 +13,7 @@
 
 
   	printf "Running WEB Server"
-    python ../etc/init.d/pyServer.py
+    python ../etc/init.d/pyServer.py&
   	[ $? = 0 ] && echo "OK" || echo "FAIL"
   	;;
     stop)
