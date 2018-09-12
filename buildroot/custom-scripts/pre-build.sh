@@ -3,5 +3,6 @@
 cp $BASE_DIR/../custom-scripts/S41network-config $BASE_DIR/target/etc/init.d
 chmod +x $BASE_DIR/target/etc/init.d/S41network-config
 
-cp $BASE_DIR/../custom-scripts/index.html $BASE_DIR/target/etc/init.d
-chmod +x $BASE_DIR/target/etc/init.d/index.html
+cp $BASE_DIR/../custom-scripts/pyServer.py $BASE_DIR/target/etc/init.d
+chmod +x $BASE_DIR/target/etc/init.d/pyServer.py
+

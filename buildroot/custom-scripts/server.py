@@ -18,7 +18,7 @@ class MyRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 	def makeindex(self):
 	    tofile = html % datetime.datetime.now().time()
 		f = open("index.html", "w")
-		f.write(tofile)
+		f.write(html)
 		f.close()
    return
 	
