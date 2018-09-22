@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>	
+		<meta charset="UTF-8">
+		<title>Tutorial Servidor WEB em Distribuicao Linux</title>
+		<style type="text/css">
+			pre {
+				background-color:#e9e9e9  ;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Trabalho 01: Sistemas Embarcados</h1>
+		<p><b>Grupo:</b> Letícia Marchi, Gabriel Bressanini.</p>
+		<p><b>Professor:</b> Carlos R. Moratelli.</p>
+
+		<hr>
+
+		<p><b>Premissa:</b> Este tutorial pressupõe que os tutoriais disponibilizados no moodle da disciplina de Sistemas Embarcados foram devidamente realizados.</p>
+		
+		<OL>
+  			<LI><A HREF="#toc1">Passo 1: Alterar IP do Host</A>
+  			<LI><A HREF="#toc2">Passo 2: Adicionar compilador Python na distribuição Linux</A>
+  			<LI><A HREF="#toc3">Passo 3: Criando o servidor WEB com as informações solicitadas</A>
+    			<UL>
+    				<LI><A HREF="#toc4">Passo 3.1: Adicionando a ferramenta PSUTIL na distribuição Linux</A>
+		    	</UL>
+  			<LI><A HREF="#toc5">Passo 4: Inserindo código do servidor WEB na distribuição Linux</A>
+			<LI><A HREF="#toc6">Passo 5: Testando servidor</A>
+		</OL>
+		<hr>
+		<a name="toc1"></a>
+		<h2>Passo 1: Alterar IP do Host</h2>
+		<p>Neste processo, deve-se alterar o IP do host que está sendo utilizado no arquivo <b>S41network-config</b>.
+		Para isto, deve-se utilizar o comando  <b>ifconfig</b> no terminal do host, e encontrar o IP referente à esta máquina.
+		Com o IP do host encontrado, deve-se modificar as seguintes linhas do arquivo <b>S41network-config</b>, substituindo <IP do HOST> pelo IP encontrado:</p>
+		<pre>/sbin/route add -host IP_do_HOST dev eth0
+/sbin/route add default gw IP_do_HOST</pre>
+
+
+		<a name="toc2"></a>
+		<h2>Passo 2: Adicionar compilador Python na distribuição Linux</h2>
+		<p>Esta etapa deve ser realizada conforme apresentada no roteiro disponibilizado no moodle referente ao trabalho 01. Ou seja, para adicionar o suporte para a linguagem Python, deve-se
+		adicionar o interpretador "através do menuconfig do Buildroot <b>(submenu Interpreter languages and scripting)</b>.
+		Contudo, o Python exige uma toolchain que suporte <b>WCHAR</b> (um tipo de variável usado para codificação de strings UTF-16).
+		Esse suporte também pode ser adicionado através do menuconfig. Será necessário a recompilação total da
+		distribuição <b>(make clean, seguido de make)</b>. MORATELLI, C.</p>
+		
+		<a name="toc3"></a>
+		<h2>Passo 3: Criando o servidor WEB com as informações solicitadas</h2>
+		<p>O servidor WEB deveria disponibilizar as seguintes informações referente à maquina na qual ele esteja sendo executado:</p>
+		<ol>
+  			<li>Data e hora do sistema
+			<li>Uptime (tempo de funcionamento sem reinicialização) em segundos
+			<li>Modelo do processador e velocidade
+			<li>Capacidade ocupada do processador (%)
+			<li>Quantidade de memória RAM total e usada (MB)
+			<li>Versão do sistema
+			<li>Lista de processos em execução (PID e nome)
+		</ol>
+		<p>Para efetivamente conseguir estas informações, foi desenvolvido o código em Python <b>pyServer.py</b> que está disponível 
+		<a href="https://github.com/Bressanini/SistemasEmbarcados/blob/master/buildroot/custom-scripts/pyServer.py" target="_blank">aqui</a></p>
+		
+		<a name="toc4"></a>
+		<h3>Passo 3.1: Adicionando a ferramenta PSUTIL na distribuição Linux</h2>
+		<p>O código disponibilizado (<b>pyServer.py</b>) necessita que a ferramenta <b>PSUTIL</b> esteja disponível na
+		distribuição Linux utilizada, para isto, deve-se realizar o comando</p>
+		<pre>$ make menuconfig</pre>
+		<p>Dentro do menuconfig, deve-se navegar nas janelas de modo à habilitar a ferramenta <b>PSUTIL</b>, o caminho para isso é:</p>
+		<pre>$ make menuconfig<ul>Target packages<ul>Interpreter languages and scripting<ul>External pyhton modules<ul>[*]python-psutil</ul></ul></ul></ul></pre>
+		
+		<a name="toc5"></a>
+		<h2>Passo 4: Inserindo código do servidor WEB na distribuição Linux</h2>
+		<p>Para enviar o código do servidor à um diretório quando a distribuição for embarcada em algum dispositivo, foi modificado o arquivo <b>pre-build.sh</b></p>
+		<pre>cp $BASE_DIR/../custom-scripts/pyServer.py $BASE_DIR/target/etc/init.d
+chmod +x $BASE_DIR/target/etc/init.d/pyServer.py</pre>
+		<p>A primeira linha envia o arquivo <b>pyServer.py</b> para o diretório <b>$BASE_DIR/target/etc/init.d</b>. A segunda linha serve para dar permissão de execução para o arquivo <b>pyServer.py</b>.</p>
+		<p>Uma alteração no arquivo <b>S41network-config</b> também deve ser realizada:</p>
+<pre>printf "Running WEB Server"
+python ../etc/init.d/pyServer.py&</pre>
+		<p>Com esta alteração, o arquivo <b>pyServer.py</b> será executado quando a distrubuição linux for ligada. A execução do arquivo ficará em segundo plano por conta do comando "&" colocado no final da segunda linha de comando.</p>
+		
+		<a name="toc6"></a>
+		<h2>Passo 5: Testando servidor</h2>
+		<p>Para testar o servidor, após realizar as alterações conforme explicadas neste tutorial, deve-se abrir o terminal e ir até a pasta <b>buildroot</b>, dentro desta pasta deve-se executar o comando</p>
+		<pre>$ make</pre>
+		<p>Após isto, deve-se executar o seguinte comando para iniciar um guest da distribuição linux:</p>
+		<pre>$ sudo qemu-system-i386 --device e1000,netdev=eth0,mac=aa:bb:cc:dd:ee:ff \
+  	--netdev tap,id=eth0,script=custom-scripts/qemu-ifup \
+  	--kernel output/images/bzImage \
+  	--hda output/images/rootfs.ext2 --nographic \
+  	--append "console=ttyS0 root=/dev/sda" </pre>
+		<p>Com isso, nosso servidor WEB já estará disponível, para testá-lo basta iniciar o browser e no local da URL deve-se colocar o ip do guest, que no nosso caso foi configurado como: <b>192.168.1.10</b></p>
+			
+	</body>
+</html>
